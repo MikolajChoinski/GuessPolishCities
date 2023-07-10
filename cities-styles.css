@@ -101,9 +101,7 @@ body {
   border-width: thin;
   border-color: rgba(0, 0, 0, 0.736);
   box-shadow: 0px 0px 10px rgba(194, 183, 183, 0.565);
-  background-color: white;
 }
-
 .navbar-bottom {
   background-color: #D4213D;
   height: 40px;
