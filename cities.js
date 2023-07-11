@@ -1,3 +1,10 @@
+const form = document.querySelector(".guess input");
+const input = document.querySelector(".guess input");
+const guesses = [];
+
+
+
+
 const myMap = L.map('map').setView([52, 19.25], 6);
 
 
@@ -13,20 +20,7 @@ var CartoDB_PositronNoLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/li
 
 CartoDB_PositronNoLabels.addTo(myMap)
 
-var guessField = document.getElementById('input');
 
-// Initialize the inputValue variable
-var guessValue = 'Warsaw';
-
-// Add an event listener for the Enter key
-guessField.addEventListener('keydown', function(event) {
-  if (event.keyCode === 13) { // Check if Enter key is pressed
-    guessValue = guessField.value; // Update the inputValue variable with the input field value
-    console.log(guessValue); // Display the updated value in the console or perform any other desired action
-  }
-
-});
-// Replace 'YOUR_USERNAME' with your GeoNames username
 
 
 // Set up the API request
@@ -87,9 +81,13 @@ async function getPoland() {
     const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q36&origin=*`;
     const res = await fetch(url)
     const data = await res.json();
-    console.log(res)
-    console.log(data.entities.Q270.claims.P1082);
-    const populations = data.entities.Q270.claims.P1082;
+    console.log(data)
+    console.log(data.entities.Q36.claims.P1082);
+    console.log(data.entities.Q36.claims.P625);
+    console.log(data.entities.Q36.claims.P625[0].mainsnak.datavalue.value.latitude);
+    marker = new L.marker([data.entities.Q36.claims.P625[0].mainsnak.datavalue.value.latitude, data.entities.Q36.claims.P625[0].mainsnak.datavalue.value.longitude]);
+    marker.addTo(myMap);
+    const populations = data.entities.Q36.claims.P1082;
     for (let i = 0; i < populations.length; i++){
       if (populations[i].rank=='preferred') {
         console.log(populations[i].mainsnak.datavalue.value.amount);
@@ -100,58 +98,70 @@ async function getPoland() {
   }
 }
 
-//getPoland();
-
-async function getName() {
-
-  try {
-    const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=pl&search=${ guessValue }&origin=*`;
-    const res = await fetch(url)
-    const data = await res.json();
-    console.log(res)
-    console.log(data);
-    console.log(data.search[0].id)
-    const ID = data.search[0].id;
-    return ID;
-  } catch(e) {
-    console.log(e, e.response)
-  }
-}
+getPoland();
 
 
 
 
 
-
-
-async function getData(ID) {
-
-  try {
-    const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=${ ID }&origin=*`;
-    const res = await fetch(url)
-    const data = await res.json();
-    console.log(res)
-    console.log(data.entities.Q270.claims.P1082);
-    const populations = data.entities.Q270.claims.P1082;
-    for (let i = 0; i < populations.length; i++){
-      if (populations[i].rank=='preferred') {
-        console.log(populations[i].mainsnak.datavalue.value.amount);
-      }
-    }
-  } catch(e) {
-    console.log(e, e.response)
-  }
-}
-
-async function getCity() {
-  try {
-    const data = await getName();
-    await getData(data);
-  } catch (error) {
-    console.error(error);
-  }
+form.addEventListener("keydown", (event) => {
+  if (event.keyCode === 13) {
+  event.preventDefault();
+  var guessValue = input.value;
   
-}
+    
+    async function getName() {
 
-getCity();
-
+      try {
+        const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=pl&search=${ guessValue }&origin=*`;
+        const res = await fetch(url)
+        const data = await res.json();
+        console.log(res)
+        console.log(data);
+        console.log(data.search[0].id)
+        const ID = data.search[0].id;
+        return ID;
+      } catch(e) {
+        console.log(e, e.response)
+      }
+    }
+    
+    
+    
+    
+    
+    
+    
+    async function getData(ID) {
+    
+      try {
+        const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=${ID}&origin=*`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const object = data.entities[ID].claims.P1082;
+        marker2 = new L.marker([data.entities[ID].claims.P625[0].mainsnak.datavalue.value.latitude, data.entities[ID].claims.P625[0].mainsnak.datavalue.value.longitude]);
+        marker2.addTo(myMap);
+        for (let i = 0; i < object.length; i++) {
+          if (object[i].rank === 'preferred') {
+            const population = object[i].mainsnak.datavalue.value.amount;
+            console.log(population);
+          }
+        }
+      } catch(e) {
+        console.log(e, e.response)
+      }
+    }
+    
+    async function getCity() {
+      try {
+        const data = await getName();
+        await getData(data);
+      } catch (error) {
+        console.error(error);
+      }
+      
+    }
+  
+  getCity();
+  }
+});
