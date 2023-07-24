@@ -23,82 +23,59 @@ CartoDB_PositronNoLabels.addTo(myMap)
 
 
 
-// Set up the API request
-
-
-// Send the request
-// Replace 'YOUR_USERNAME' with your GeoNames username
 
 
 
-
-/* async function getCity() {
+async function getBeta(){
   
-  const settings = {
-    headers: {
-    'Content-Type': 'application/json',
-    'Authorization' : 'Bearer ',
-
-  }
-}
 
 try {
-  const response = 	await fetch(`https://wikidata.org/w/rest.php/wikibase/v0/entities/items/Q270`);
-  const object = await response.json();
-  console.log(object);
-} catch (e) {
-    return e;
+  const url = `https://query.wikidata.org/sparql?query=SELECT%20?dob%20WHERE%20{wd:Q42%20wdt:P569%20?dob.}`;
+  
+  const res = await fetch(url);
+  const data = await res.text();
+  
+  console.log(data);
+} catch (error) {
+  console.error('Error executing SPARQL query:', error);
 }
-
 };
 
-getCity(); */
-
-/* async function getCity() {
-
-  const url = 'https://www.wikidata.org/w/rest.php/wikibase/v0/entities/items/Q270s' ;
-
-  const response = await fetch(url, {
-      headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJlMjQwN2FlZWE1MjRlY2ViZWJlM2MxMzkxNWVmZjY4YiIsImp0aSI6ImRkODVlZTg5Y2E2MWM2ZWM0OTI3NTIwYzhhYzU5OWY0YjAzOTIyZmI2MzhkNDVkZTMwYTAzYWUyNGQ2MjNlODZlNmNmYzFlMzRiNTA5M2NjIiwiaWF0IjoxNjg3OTUzMDAwLjA4NzIzNiwibmJmIjoxNjg3OTUzMDAwLjA4NzIzOSwiZXhwIjozMzI0NDg2MTgwMC4wODIzNiwic3ViIjoiNzMxODAzMTEiLCJpc3MiOiJodHRwczovL21ldGEud2lraW1lZGlhLm9yZyIsInJhdGVsaW1pdCI6eyJyZXF1ZXN0c19wZXJfdW5pdCI6NTAwMCwidW5pdCI6IkhPVVIifSwic2NvcGVzIjpbImJhc2ljIl19.P14Im-w0lkv9N0YWkZUOpjhCE4hwVz71i3TkS7A-R2mE3UepDs9RU9ojBDEXd8jPwJdyCI056TNdcL2DJ1uORQMOSA0qiumn91ZXcPracB-cBEAFyNDikvqX_857JbBMX79j6W7z9vXhLB3k7mweEZTqUMmAa5Edsw--Gt8d-CTnKN-f7H9fFkpEOuTX3ymhwTViS6WV0hBbhjKaG8HjVJSLBYzUFHg3mpUK7WqxQEWUwH3IxOwwHO-nQTQorv7ofj2w2H4mN-iufEFmRfuXIjHFjTmK_l51PHPV5ask0oMDFEOggkaVFE2XR0tdM6Ly3qLeq2P4x5qaKndu1_byiPnNoEsffkzrMoaFFtmGAGWl5NchnT5MvvIkBkfRXFLtvsdQd1zs-GpwlxcvETt7ppfdCigeJvo-W2LX-KcGp7wj5fszlJuk7I91uj3zZxdez7alV1A2cXKTjF2jEiSRuyZFjNVy73MWWxUKNS73C3617JvCu-5q9dL3Tbbljkr3RdUXswwnvfp7bnd72dkRdJXhP9LgrwAbr3h2SYod-n-7Qxzt4vT_l8RG7t0iIVJzLAzkIXtOgARsYopviVkaiNIq-21BViEFOx-dFocC4-Y2i8aPKnxbjXg9eNE1yxHw75wBiQUjWNCKVV6DH3wjFdlw55TVtJ54LPQZI8_i1XM',
-      },
-  });
-
-  const text = await response.text();
-
-  console.log(text);
-
-}
-
-getCity()
- */
-
+//getBeta();
 
 async function getPoland() {
 
+  const SPARQL = `SELECT ?instanceof ?instanceofLabel WHERE {
+    wd:Q36 wdt:P1082 ?instanceof.
+    SERVICE wikibase:label {
+     bd:serviceParam wikibase:language 'en' .
+    }
+  }`;
   try {
-    const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q36&origin=*`;
+    
+    const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q36&formatversion=2&origin=*`;
+    //const url = `https://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=Q36&props=references&formatversion=2&origin=*`;
+    //const url = `https://query.wikidata.org/sparql?query=${SPARQL}`;
     const res = await fetch(url)
     const data = await res.json();
     console.log(data)
-    console.log(data.entities.Q36.claims.P1082);
-    console.log(data.entities.Q36.claims.P625);
-    console.log(data.entities.Q36.claims.P625[0].mainsnak.datavalue.value.latitude);
-    marker = new L.marker([data.entities.Q36.claims.P625[0].mainsnak.datavalue.value.latitude, data.entities.Q36.claims.P625[0].mainsnak.datavalue.value.longitude]);
-    marker.addTo(myMap);
-    const populations = data.entities.Q36.claims.P1082;
-    for (let i = 0; i < populations.length; i++){
-      if (populations[i].rank=='preferred') {
-        console.log(populations[i].mainsnak.datavalue.value.amount);
-      }
-    }
+    //console.log(data.entities.Q36.claims.P1082);
+    //console.log(data.entities.Q36.claims.P625);
+    //console.log(data.entities.Q36.claims.P625[0].mainsnak.datavalue.value.latitude);
+    //marker = new L.marker([data.entities.Q36.claims.P625[0].mainsnak.datavalue.value.latitude, data.entities.Q36.claims.P625[0].mainsnak.datavalue.value.longitude]);
+    //marker.addTo(myMap);
+    //const populations = data.entities.Q36.claims.P1082;
+    //for (let i = 0; i < populations.length; i++){
+      //if (populations[i].rank=='preferred') {
+        //console.log(populations[i].mainsnak.datavalue.value.amount);
+      //}
+    //}
   } catch(e) {
-    console.log(e, e.response)
+    console.log(e, e.response);
   }
 }
 
-getPoland();
+//getPoland();
 
 
 
@@ -135,18 +112,45 @@ form.addEventListener("keydown", (event) => {
     async function getData(ID) {
     
       try {
-        const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=${ID}&origin=*`;
+        const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=${ID}&origin=*`; //use later wbgetclaims
         const res = await fetch(url);
         const data = await res.json();
+        console.log(data);
         const object = data.entities[ID].claims.P1082;
-        marker2 = new L.marker([data.entities[ID].claims.P625[0].mainsnak.datavalue.value.latitude, data.entities[ID].claims.P625[0].mainsnak.datavalue.value.longitude]);
-        marker2.addTo(myMap);
+        const entityType = data.entities[ID].claims.P31;
+        const entityCountry = data.entities[ID].claims.P17;
+        var Type = 0;
         for (let i = 0; i < object.length; i++) {
           if (object[i].rank === 'preferred') {
-            const population = object[i].mainsnak.datavalue.value.amount;
+            var population = object[i].mainsnak.datavalue.value.amount;
             console.log(population);
           }
+          else if (object.length = 1) {
+            var population = object[i].mainsnak.datavalue.value.amount;
+          }
         }
+          
+        for (let i = 0; i < entityType.length; i++) {
+          if (entityType[i].mainsnak.datavalue.value.id === 'Q515' || entityType[i].mainsnak.datavalue.value.id === 'Q3558970' || entityType[i].mainsnak.datavalue.value.id === 'Q2616791' || entityType[i].mainsnak.datavalue.value.id === 'Q925381' ) {
+            console.log(entityType[i].mainsnak.datavalue.value.id);
+            Type = 1;
+            console.log(Type);
+            break;
+          }
+        }
+        for (let i = 0; i < entityCountry.length; i++) {
+          if ((entityCountry[i].rank === 'preferred' && entityCountry[i].mainsnak.datavalue.value.id === 'Q36' && Type == 1) || (Type == 1 &&  entityCountry[i].mainsnak.datavalue.value.id === 'Q36'))   {
+            marker2 = new L.marker([data.entities[ID].claims.P625[0].mainsnak.datavalue.value.latitude, data.entities[ID].claims.P625[0].mainsnak.datavalue.value.longitude]);
+            marker2.addTo(myMap);
+            const guess = {
+              Population: population
+            };
+            guesses.push(guess);
+            console.log(guesses);
+            break;
+          }
+        }
+
       } catch(e) {
         console.log(e, e.response)
       }
