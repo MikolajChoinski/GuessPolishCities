@@ -116,20 +116,23 @@ form.addEventListener("keydown", (event) => {
         const res = await fetch(url);
         const data = await res.json();
         console.log(data);
-        const object = data.entities[ID].claims.P1082;
+        const entityPop = data.entities[ID].claims.P1082;
         const entityType = data.entities[ID].claims.P31;
         const entityCountry = data.entities[ID].claims.P17;
         var Type = 0;
-        for (let i = 0; i < object.length; i++) {
-          if (object[i].rank === 'preferred') {
-            var population = object[i].mainsnak.datavalue.value.amount;
-            console.log(population);
+        
+          for (let i = 0; i < entityPop.length; i++) {
+            if (entityPop[i].rank === 'preferred') {
+              var population = entityPop[i].mainsnak.datavalue.value.amount;
+              console.log(population);
+              break;
+            }
+            else if (entityPop.length = 1) {
+              var population = entityPop[i].mainsnak.datavalue.value.amount;
+            }
           }
-          else if (object.length = 1) {
-            var population = object[i].mainsnak.datavalue.value.amount;
-          }
-        }
-          
+        
+        
         for (let i = 0; i < entityType.length; i++) {
           if (entityType[i].mainsnak.datavalue.value.id === 'Q515' || entityType[i].mainsnak.datavalue.value.id === 'Q3558970' || entityType[i].mainsnak.datavalue.value.id === 'Q2616791' || entityType[i].mainsnak.datavalue.value.id === 'Q925381' ) {
             console.log(entityType[i].mainsnak.datavalue.value.id);
