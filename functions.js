@@ -14,9 +14,9 @@ CartoDB_PositronNoLabels.addTo(myMap)
 
 //Functions
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function checkGuess(guessValue, guesses) {
+function checkGuess(name, guesses) {
   var guessTrue
-  if ( guesses.length > 0 && guessValue === guesses[guesses.length - 1].Name) {
+  if ( guesses.length > 0 && name === guesses[guesses.length - 1].Name) {
     guessTrue = false;
   }
   else {
@@ -46,10 +46,11 @@ async function getPoland() {
     const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=pl&search=${ guessValue }&origin=*`;
     const res = await fetch(url)
     const data = await res.json();
-    console.log(data);
-    console.log(data.search[0].id)
-    const ID = data.search[0].id;
-    return ID;
+    //console.log(data);
+    //console.log(data.search[0].id)
+    var ID = data.search[0].id;
+    var name = data.search[0].label
+    return [ID, name];
   } catch(e) {
     console.log(e, e.response)
   }
@@ -60,11 +61,11 @@ function getType(entityType, data, ID) {
   var typeTrue;
   for (let i = 0; i < entityType.length; i++) {
     var entityTypeId = data.entities[ID].claims.P31[i].mainsnak.datavalue.value.id;
-    console.log(entityTypeId);
+    //console.log(entityTypeId);
     if (entityTypeId === "Q515" || entityTypeId === "Q3558970" || entityTypeId === "Q2616791" || entityTypeId === "Q925381" || entityTypeId === "Q15334") {
       if (entityTypeId === "Q515" || entityTypeId === "Q2616791" || entityTypeId === "Q925381" || entityTypeId === "Q15334" ) {
         typeOfSettlement = "city";
-        console.log(typeOfSettlement);
+        //console.log(typeOfSettlement);
         typeTrue = true;
         break;
       }
@@ -118,7 +119,7 @@ form.addEventListener("keydown", (event) => {
   event.preventDefault();
   var guessValue = input.value;
 
-  async function getData(ID) {
+  async function getData(ID, name) {
     try {
       const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=${ID}&origin=*`; //use later wbgetclaims
       const res = await fetch(url);
@@ -129,7 +130,7 @@ form.addEventListener("keydown", (event) => {
       var entityCountry = data.entities[ID].claims.P17;
       var entityCoordinates = data.entities[ID].claims.P625[0];
       
-      var guessTrue = checkGuess(guessValue, guesses);
+      var guessTrue = checkGuess(name, guesses);
 
       if (guessTrue === true) {
         var [typeOfSettlement, typeTrue] = getType(entityType, data, ID);
@@ -152,9 +153,8 @@ form.addEventListener("keydown", (event) => {
         return false;
       }
       
-      var name = guessValue;
       
-      return [entityCoordinates, typeOfSettlement, population, name];
+      return [entityCoordinates, typeOfSettlement, population]; 
     } catch(e) {
       console.log(e, e.response)
     }
@@ -162,10 +162,10 @@ form.addEventListener("keydown", (event) => {
 
   async function getCity() {
     try {
-      const ID = await getId(guessValue);
-      var data = await getData(ID);
+      var [ID, name] = await getId(guessValue);
+      var data = await getData(ID, name);
       console.log(data);
-      return data;
+      return [data, name];
     } catch (error) {
       console.error(error);
     }
@@ -173,25 +173,50 @@ form.addEventListener("keydown", (event) => {
       
   async function plopCity() {
     try {
-      var [entityCoordinates, typeOfSettlement, population, name] = await getCity();
-      marker = new L.marker([entityCoordinates.mainsnak.datavalue.value.latitude, entityCoordinates.mainsnak.datavalue.value.longitude]);
-      marker.addTo(myMap);
-      var guess = {
-        "Name": name,
-        "Population": population,
-        "Type of settlement": typeOfSettlement,
-        "Latitude": entityCoordinates.mainsnak.datavalue.value.latitude,
-        "Longitude": entityCoordinates.mainsnak.datavalue.value.longitude
+      var [data, name] = await getCity();
+      if (data === false) {
+        console.log("BAD GUESS");
+        return false
       }
-      guesses.push(guess);
-      console.log(guesses);
+      else {
+        var [entityCoordinates, typeOfSettlement, population] = data;
+        console.log(entityCoordinates);
+        var guess = {
+          "Name": name,
+          "Population": population,
+          "TypeOfSettlement": typeOfSettlement,
+          "Latitude": entityCoordinates.mainsnak.datavalue.value.latitude,
+          "Longitude": entityCoordinates.mainsnak.datavalue.value.longitude
+        }
+        marker = new L.marker([entityCoordinates.mainsnak.datavalue.value.latitude, entityCoordinates.mainsnak.datavalue.value.longitude]);
+        marker.bindPopup(`Name : ${guess.Name}<br>Population : ${guess.Population}<br>Type of settlement : ${guess.TypeOfSettlement}<br>Latitude : ${guess.Latitude}<br>Longitude : ${guess.Longitude}`).openPopup();
+        marker.addTo(myMap);
+        guesses.push(guess);
+        return guess;
+        //console.log(guesses);  
+    }
     }
     catch (error) {
       console.error(error);
     }
   }
 
-  plopCity();
+  
+  
+  async function writeStats() {
+    try {
+      var guess = await plopCity();
+      console.log(guess);
+      const entityName = document.createElement("div");
+      entityName.textContent = guess.Name;
+      const entitiesNames = document.getElementById("entities-names");
+      entitiesNames.appendChild(entityName);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  writeStats();
   document.getElementById("form").reset();
   }
 });

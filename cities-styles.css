@@ -108,3 +108,7 @@ body {
   width: 100%
 }
 
+#entities-names {
+  white-space: pre;
+  background-color: white;
+}
