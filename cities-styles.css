@@ -105,7 +105,11 @@ body {
 .navbar-bottom {
   background-color: #D4213D;
   height: 40px;
-  width: 100%
+  width: 100%;
+}
+
+#entities-pop {
+  padding: 10px;
 }
 
 #entities-names {

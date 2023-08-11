@@ -1,6 +1,12 @@
+// By Mono - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=30407917
+
+
 const form = document.querySelector(".guess input");
 const input = document.querySelector(".guess input");
 const guesses = [];
+const stats = document.getElementById("entities-pop");
+
+
 
 const myMap = L.map('map').setView([52, 19.25], 6);
 
@@ -14,6 +20,16 @@ CartoDB_PositronNoLabels.addTo(myMap)
 
 //Functions
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+async function getNumber(string) {
+  try {
+    var stringSlice = string.slice(1);
+    var sliceNumber = parseInt(stringSlice);
+    return sliceNumber;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 function checkGuess(name, guesses) {
   var guessTrue
   if ( guesses.length > 0 && name === guesses[guesses.length - 1].Name) {
@@ -30,10 +46,12 @@ async function getPoland() {
     const url = `https://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=Q36&props=references&formatversion=2&origin=*`
     const res = await fetch(url);
     const data = await res.json();
-    const populations = data.entities.Q36.claims.P1082;
+    console.log(data);
+    const populations = data.claims.P1082;
     for (let i = 0; i < populations.length; i++){
-      if (populations[i].rank=='preferred') {
+      if (populations[i].rank ==='preferred') {
         var poland = populations[i].mainsnak.datavalue.value.amount;
+        console.log(poland);
       }
     }
     return poland;
@@ -101,26 +119,32 @@ function getType(entityType, data, ID) {
 
   function getPopulation(entityPop) {
     for (let i = 0; i < entityPop.length; i++) {
+      console.log(entityPop.length);
       if (entityPop[i].rank === "preferred") {
         var population = entityPop[i].mainsnak.datavalue.value.amount;
+        console.log("preferred");
         break;
       }
-      else if (entityPop.length = 1) {
+      else if (entityPop.length === 1) {
         var population = entityPop[i].mainsnak.datavalue.value.amount;
+        console.log("notpreferred");
         break;
       }
     }
     return population;
   }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+var guessPop = 0;
 form.addEventListener("keydown", (event) => {
   if (event.keyCode === 13) {
   event.preventDefault();
   var guessValue = input.value;
 
+  
   async function getData(ID, name) {
     try {
+      var poland = await getPoland();
+      console.log(poland);
       const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=${ID}&origin=*`; //use later wbgetclaims
       const res = await fetch(url);
       const data = await res.json();
@@ -153,7 +177,20 @@ form.addEventListener("keydown", (event) => {
         return false;
       }
       
+      async function getPercentage(population, poland) {
+        var polNumber = await getNumber(poland);
+        console.log(polNumber);
+        var popNumber = await getNumber(population);
+        console.log(popNumber);
+        guessPop = guessPop + popNumber;
+        console.log(guessPop);
+        var fraction = guessPop * 100 / polNumber;
+        var percentage = fraction.toFixed(2);
+        console.log(guesses.length);
+        stats.textContent = "You guessed the population of " + guessPop + " out of " + polNumber + " people living in poland   " + percentage + " %";
+      }
       
+      getPercentage(population, poland);
       return [entityCoordinates, typeOfSettlement, population]; 
     } catch(e) {
       console.log(e, e.response)
@@ -188,7 +225,13 @@ form.addEventListener("keydown", (event) => {
           "Latitude": entityCoordinates.mainsnak.datavalue.value.latitude,
           "Longitude": entityCoordinates.mainsnak.datavalue.value.longitude
         }
-        marker = new L.marker([entityCoordinates.mainsnak.datavalue.value.latitude, entityCoordinates.mainsnak.datavalue.value.longitude]);
+        var myIcon = L.icon({
+          iconUrl: 'Map_pin_icon.svg',
+          iconSize: [30, 42],
+          iconAnchor: [15, 42],
+          popupAnchor: [0, -30]
+        });
+        marker = new L.marker([entityCoordinates.mainsnak.datavalue.value.latitude, entityCoordinates.mainsnak.datavalue.value.longitude], {icon: myIcon});
         marker.bindPopup(`Name : ${guess.Name}<br>Population : ${guess.Population}<br>Type of settlement : ${guess.TypeOfSettlement}<br>Latitude : ${guess.Latitude}<br>Longitude : ${guess.Longitude}`).openPopup();
         marker.addTo(myMap);
         guesses.push(guess);
