@@ -43,49 +43,18 @@ try {
 
 //getBeta();
 
-async function getPoland() {
 
-  const SPARQL = `SELECT ?instanceof ?instanceofLabel WHERE {
-    wd:Q36 wdt:P1082 ?instanceof.
-    SERVICE wikibase:label {
-     bd:serviceParam wikibase:language 'en' .
-    }
-  }`;
-  try {
-    
-    const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q36&formatversion=2&origin=*`;
-    //const url = `https://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=Q36&props=references&formatversion=2&origin=*`;
-    //const url = `https://query.wikidata.org/sparql?query=${SPARQL}`;
-    const res = await fetch(url)
-    const data = await res.json();
-    console.log(data)
-    //console.log(data.entities.Q36.claims.P1082);
-    //console.log(data.entities.Q36.claims.P625);
-    //console.log(data.entities.Q36.claims.P625[0].mainsnak.datavalue.value.latitude);
-    //marker = new L.marker([data.entities.Q36.claims.P625[0].mainsnak.datavalue.value.latitude, data.entities.Q36.claims.P625[0].mainsnak.datavalue.value.longitude]);
-    //marker.addTo(myMap);
-    //const populations = data.entities.Q36.claims.P1082;
-    //for (let i = 0; i < populations.length; i++){
-      //if (populations[i].rank=='preferred') {
-        //console.log(populations[i].mainsnak.datavalue.value.amount);
-      //}
-    //}
-  } catch(e) {
-    console.log(e, e.response);
-  }
-}
-
-//getPoland();
 
 
 
 
 
 form.addEventListener("keydown", (event) => {
+  
   if (event.keyCode === 13) {
   event.preventDefault();
   var guessValue = input.value;
-  
+  const startTime = performance.now();
     
     async function getName() {
 
@@ -111,7 +80,7 @@ form.addEventListener("keydown", (event) => {
     
     async function getData(ID) {
     
-      try {
+      try { 
         const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=${ID}&origin=*`; //use later wbgetclaims
         const res = await fetch(url);
         const data = await res.json();
@@ -170,5 +139,10 @@ form.addEventListener("keydown", (event) => {
     }
   
   getCity();
-  }
+  const endTime = performance.now(); // Record the end time
+
+  const executionTime = endTime - startTime;
+  console.log(`Execution time: ${executionTime} milliseconds`); 
+}
+  
 });

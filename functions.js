@@ -5,7 +5,7 @@ const form = document.querySelector(".guess input");
 const input = document.querySelector(".guess input");
 const guesses = [];
 const stats = document.getElementById("entities-pop");
-
+let poland = null;
 
 
 const myMap = L.map('map').setView([52, 19.25], 6);
@@ -20,7 +20,7 @@ CartoDB_PositronNoLabels.addTo(myMap)
 
 //Functions
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-async function getNumber(string) {
+function getNumber(string) {
   try {
     var stringSlice = string.slice(1);
     var sliceNumber = parseInt(stringSlice);
@@ -43,6 +43,7 @@ function checkGuess(name, guesses) {
 
 async function getPoland() {
   try {
+    
     const url = `https://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=Q36&props=references&formatversion=2&origin=*`
     const res = await fetch(url);
     const data = await res.json();
@@ -50,16 +51,19 @@ async function getPoland() {
     const populations = data.claims.P1082;
     for (let i = 0; i < populations.length; i++){
       if (populations[i].rank ==='preferred') {
-        var poland = populations[i].mainsnak.datavalue.value.amount;
+        var polandString = populations[i].mainsnak.datavalue.value.amount;
+        var poland = getNumber(polandString);
         console.log(poland);
       }
     }
     return poland;
+    
   } catch(e) {
     console.log(e);
   }
+  
 }
- async function getId(guessValue) {
+async function getId(guessValue) {
   try {
     const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=pl&search=${ guessValue }&origin=*`;
     const res = await fetch(url)
@@ -73,12 +77,11 @@ async function getPoland() {
     console.log(e, e.response)
   }
 }
-
 function getType(entityType, data, ID) {
   var typeOfSettlement;
   var typeTrue;
   for (let i = 0; i < entityType.length; i++) {
-    var entityTypeId = data.entities[ID].claims.P31[i].mainsnak.datavalue.value.id;
+    var entityTypeId = data.claims.P31[i].mainsnak.datavalue.value.id;
     //console.log(entityTypeId);
     if (entityTypeId === "Q515" || entityTypeId === "Q3558970" || entityTypeId === "Q2616791" || entityTypeId === "Q925381" || entityTypeId === "Q15334") {
       if (entityTypeId === "Q515" || entityTypeId === "Q2616791" || entityTypeId === "Q925381" || entityTypeId === "Q15334" ) {
@@ -133,26 +136,44 @@ function getType(entityType, data, ID) {
     }
     return population;
   }
+
+  function getPercentage(population, poland) {
+    guessPop = guessPop + population;
+    console.log(guessPop);
+    var fraction = guessPop * 100 / poland;
+    var percentage = fraction.toFixed(2);
+    console.log(guesses.length);
+    stats.textContent = "You guessed the population of " + guessPop + " out of " + poland + " people living in poland   " + percentage + " %";
+  }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var guessPop = 0;
+document.addEventListener('DOMContentLoaded', async () => {
+  poland = await getPoland();
+});
+
+console.log(poland);
 form.addEventListener("keydown", (event) => {
   if (event.keyCode === 13) {
   event.preventDefault();
   var guessValue = input.value;
-
+  const startTime = performance.now();
   
   async function getData(ID, name) {
     try {
-      var poland = await getPoland();
-      console.log(poland);
-      const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=${ID}&origin=*`; //use later wbgetclaims
+      
+      const url = `https://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=${ID}&origin=*`; //use later wbgetclaims
       const res = await fetch(url);
       const data = await res.json();
       console.log(data);
-      var entityType = data.entities[ID].claims.P31;
-      var entityPop = data.entities[ID].claims.P1082;
-      var entityCountry = data.entities[ID].claims.P17;
-      var entityCoordinates = data.entities[ID].claims.P625[0];
+      //var entityType = data.entities[ID].claims.P31;
+      //var entityPop = data.entities[ID].claims.P1082;
+      //var entityCountry = data.entities[ID].claims.P17;
+      //var entityCoordinates = data.entities[ID].claims.P625[0];
+      var entityType = data.claims.P31;
+      var entityPop = data.claims.P1082;
+      var entityCountry = data.claims.P17;
+      var entityCoordinates = data.claims.P625[0];
+      console.log(entityType);
       
       var guessTrue = checkGuess(name, guesses);
 
@@ -172,25 +193,12 @@ form.addEventListener("keydown", (event) => {
       
       if (countryTrue === true) {
         var population = getPopulation(entityPop);
+        population = getNumber(population);
       }
       else {
         return false;
       }
       
-      async function getPercentage(population, poland) {
-        var polNumber = await getNumber(poland);
-        console.log(polNumber);
-        var popNumber = await getNumber(population);
-        console.log(popNumber);
-        guessPop = guessPop + popNumber;
-        console.log(guessPop);
-        var fraction = guessPop * 100 / polNumber;
-        var percentage = fraction.toFixed(2);
-        console.log(guesses.length);
-        stats.textContent = "You guessed the population of " + guessPop + " out of " + polNumber + " people living in poland   " + percentage + " %";
-      }
-      
-      getPercentage(population, poland);
       return [entityCoordinates, typeOfSettlement, population]; 
     } catch(e) {
       console.log(e, e.response)
@@ -249,11 +257,13 @@ form.addEventListener("keydown", (event) => {
   async function writeStats() {
     try {
       var guess = await plopCity();
-      console.log(guess);
+      var population = guess.Population;
+      getPercentage(population, poland);
       const entityName = document.createElement("div");
       entityName.textContent = guess.Name;
       const entitiesNames = document.getElementById("entities-names");
       entitiesNames.appendChild(entityName);
+
     } catch (error) {
       console.error(error);
     }
@@ -261,5 +271,9 @@ form.addEventListener("keydown", (event) => {
 
   writeStats();
   document.getElementById("form").reset();
-  }
+  const endTime = performance.now(); 
+      const executionTime = endTime - startTime;
+      console.log(`Execution time: ${executionTime} milliseconds`);
+}
+  
 });
