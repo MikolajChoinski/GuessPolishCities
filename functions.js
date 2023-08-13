@@ -31,13 +31,23 @@ function getNumber(string) {
 }
 
 function checkGuess(name, guesses) {
-  var guessTrue
-  if ( guesses.length > 0 && name === guesses[guesses.length - 1].Name) {
-    guessTrue = false;
-  }
-  else {
+  var guessTrue;
+  console.log(name);
+  console.log(guesses);
+  if (guesses.length > 0) {
+    for (let i = 0; i < guesses.length; i++) {
+      if (name === guesses[i].Name) {
+        guessTrue = false;
+        break;
+      }
+      else {
+        guessTrue = true;
+      }
+    }
+  } else {
     guessTrue = true;
   }
+  console.log(guessTrue);
   return guessTrue;
 }
 
@@ -63,7 +73,7 @@ async function getPoland() {
   }
   
 }
-async function getId(guessValue) {
+/* async function getId(guessValue) {
   try {
     const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=pl&search=${ guessValue }&origin=*`;
     const res = await fetch(url)
@@ -76,12 +86,27 @@ async function getId(guessValue) {
   } catch(e) {
     console.log(e, e.response)
   }
+} */
+
+async function getId(guessValue) {
+  try {
+    const url = `https://www.wikidata.org/w/api.php?action=query&list=search&srsearch=${guessValue} haswbstatement:P31=Q515|P31=Q3558970|P31=Q2616791|P31=Q925381|P31=Q15334 haswbstatement:P17=Q36&format=json&language=pl&origin=*`;
+    const res = await fetch(url)
+    const data = await res.json();
+    console.log(data);
+    //console.log(data.search[0].id)
+    var ID = data.query.search[0].title;
+    console.log(ID);
+    return ID;
+  } catch(e) {
+    console.log(e, e.response)
+  }
 }
 function getType(entityType, data, ID) {
   var typeOfSettlement;
   var typeTrue;
   for (let i = 0; i < entityType.length; i++) {
-    var entityTypeId = data.claims.P31[i].mainsnak.datavalue.value.id;
+    var entityTypeId = data.entities[ID].claims.P31[i].mainsnak.datavalue.value.id;
     //console.log(entityTypeId);
     if (entityTypeId === "Q515" || entityTypeId === "Q3558970" || entityTypeId === "Q2616791" || entityTypeId === "Q925381" || entityTypeId === "Q15334") {
       if (entityTypeId === "Q515" || entityTypeId === "Q2616791" || entityTypeId === "Q925381" || entityTypeId === "Q15334" ) {
@@ -145,6 +170,22 @@ function getType(entityType, data, ID) {
     console.log(guesses.length);
     stats.textContent = "You guessed the population of " + guessPop + " out of " + poland + " people living in poland   " + percentage + " %";
   }
+
+  function sortBiggest(arr) {
+    const sortedArray = arr.slice(); // Create a copy of the input array
+    for (let i = 1; i < sortedArray.length; i++) {
+        const currentElement = sortedArray[i];
+        let j = i - 1;
+        
+        while (j >= 0 && sortedArray[j].Population < currentElement.Population) {
+            sortedArray[j + 1] = sortedArray[j];
+            j--;
+        }
+        sortedArray[j + 1] = currentElement;
+    }
+    return sortedArray;
+}
+  
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var guessPop = 0;
 document.addEventListener('DOMContentLoaded', async () => {
@@ -158,23 +199,19 @@ form.addEventListener("keydown", (event) => {
   var guessValue = input.value;
   const startTime = performance.now();
   
-  async function getData(ID, name) {
+  async function getData(ID) {
     try {
-      
-      const url = `https://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=${ID}&origin=*`; //use later wbgetclaims
+      console.log(ID);  
+      const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&props=labels|claims&format=json&ids=${ID}&origin=*&languages=en`; //use later wbgetclaims
       const res = await fetch(url);
       const data = await res.json();
       console.log(data);
-      //var entityType = data.entities[ID].claims.P31;
-      //var entityPop = data.entities[ID].claims.P1082;
-      //var entityCountry = data.entities[ID].claims.P17;
-      //var entityCoordinates = data.entities[ID].claims.P625[0];
-      var entityType = data.claims.P31;
-      var entityPop = data.claims.P1082;
-      var entityCountry = data.claims.P17;
-      var entityCoordinates = data.claims.P625[0];
-      console.log(entityType);
-      
+      var entityType = data.entities[ID].claims.P31;
+      var entityPop = data.entities[ID].claims.P1082;
+      var entityCountry = data.entities[ID].claims.P17;
+      var entityCoordinates = data.entities[ID].claims.P625[0];
+      var name = data.entities[ID].labels.en.value;
+      console.log(name);
       var guessTrue = checkGuess(name, guesses);
 
       if (guessTrue === true) {
@@ -199,7 +236,7 @@ form.addEventListener("keydown", (event) => {
         return false;
       }
       
-      return [entityCoordinates, typeOfSettlement, population]; 
+      return [entityCoordinates, typeOfSettlement, population, name]; 
     } catch(e) {
       console.log(e, e.response)
     }
@@ -207,10 +244,13 @@ form.addEventListener("keydown", (event) => {
 
   async function getCity() {
     try {
-      var [ID, name] = await getId(guessValue);
-      var data = await getData(ID, name);
+      var ID = await getId(guessValue);
+      var data = await getData(ID);
       console.log(data);
-      return [data, name];
+      if (data === false) {
+        return [false];
+      }
+      return [data];
     } catch (error) {
       console.error(error);
     }
@@ -218,13 +258,13 @@ form.addEventListener("keydown", (event) => {
       
   async function plopCity() {
     try {
-      var [data, name] = await getCity();
+      var [data] = await getCity();
       if (data === false) {
         console.log("BAD GUESS");
-        return false
+        return false;
       }
       else {
-        var [entityCoordinates, typeOfSettlement, population] = data;
+        var [entityCoordinates, typeOfSettlement, population, name] = data;
         console.log(entityCoordinates);
         var guess = {
           "Name": name,
@@ -257,11 +297,29 @@ form.addEventListener("keydown", (event) => {
   async function writeStats() {
     try {
       var guess = await plopCity();
+      console.log(guess);
+      if (guess === false) {
+        return false;
+      }
       var population = guess.Population;
       getPercentage(population, poland);
+      
       const entityName = document.createElement("div");
       entityName.textContent = guess.Name;
       const entitiesNames = document.getElementById("entities-names");
+      const entitiesBiggest = document.getElementById("entities-biggest");
+      
+      if (guesses.length === 1) {
+        entitiesNames.textContent =  "Guessed Cities : ";
+      }
+      var biggestGuess = sortBiggest(guesses);
+      entitiesBiggest.innerHTML = "Your biggest cities : ";
+      for (let i = 0; i < biggestGuess.length; i++) {
+        const entityBiggest = document.createElement("div");
+        entityBiggest.textContent = biggestGuess[i].Name + " - " + biggestGuess[i].Population;  
+        entitiesBiggest.appendChild(entityBiggest);
+      }
+      console.log(biggestGuess);
       entitiesNames.appendChild(entityName);
 
     } catch (error) {
