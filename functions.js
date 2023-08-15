@@ -6,6 +6,9 @@ const input = document.querySelector(".guess input");
 const guesses = [];
 const stats = document.getElementById("entities-pop");
 let poland = null;
+var vilCount = 0;
+var citCount = 0;
+var entityCount = 0;
 
 
 const myMap = L.map('map').setView([52, 19.25], 6);
@@ -157,6 +160,10 @@ function getType(entityType, data, ID) {
         var population = entityPop[i].mainsnak.datavalue.value.amount;
         console.log("notpreferred");
         break;
+      } else if (entityPop.length > 1 && !entityPop.includes(entityPop.rank=== "preferred")) {
+        var population = entityPop[0].mainsnak.datavalue.value.amount;
+        console.log("weird");
+        break;
       }
     }
     return population;
@@ -201,6 +208,21 @@ function sortBiggest(arr) {
   return sortedArray;
 }
   
+function sortSmallest(arr) {
+  const sortedArray = arr.slice(); // Create a copy of the input array
+  for (let i = 1; i < sortedArray.length; i++) {
+      const currentElement = sortedArray[i];
+      let j = i - 1;
+
+      while (j >= 0 && sortedArray[j].Population > currentElement.Population) {
+          sortedArray[j + 1] = sortedArray[j];
+          j--;
+      }
+      sortedArray[j + 1] = currentElement;
+  }
+  return sortedArray;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var guessPop = 0;
 document.addEventListener('DOMContentLoaded', async () => {
@@ -312,6 +334,7 @@ form.addEventListener("keydown", (event) => {
   async function writeStats() {
     try {
       var guess = await plopCity();
+      entityCount++;
       console.log(guess);
       if (guess === false) {
         return false;
@@ -320,23 +343,39 @@ form.addEventListener("keydown", (event) => {
       getPercentage(population, poland);
       
       const entityName = document.createElement("div");
-      entityName.textContent = guess.Name;
+      entityName.textContent = entityCount + " - " + guess.Name;
       const entitiesNames = document.getElementById("entities-names");
       const entitiesBiggest = document.getElementById("entities-biggest");
-      
+      const entitiesSmallest = document.getElementById("entities-smallest");
+      const entitiesTypes = document.getElementById("entities-types");
       if (guesses.length === 1) {
-        entitiesNames.textContent =  "Guessed Cities : ";
+        const namesTitle = document.createTextNode("Guessed entitites : ");
+        entitiesNames.appendChild(namesTitle);
       }
+      entitiesNames.appendChild(entityName);
       var biggestGuess = sortBiggest(guesses);
-      entitiesBiggest.innerHTML = "Your biggest cities : ";
+      entitiesBiggest.innerHTML = "Your biggest entities : ";
       for (let i = 0; i < biggestGuess.length; i++) {
         const entityBiggest = document.createElement("div");
-        entityBiggest.textContent = biggestGuess[i].Name + " - " + biggestGuess[i].Population;  
+        entityBiggest.textContent = (i + 1) + " - " + biggestGuess[i].Name + " : " + biggestGuess[i].Population;  
         entitiesBiggest.appendChild(entityBiggest);
       }
-      console.log(biggestGuess);
-      entitiesNames.appendChild(entityName);
+      var smallestGuess = sortSmallest(guesses);
+      entitiesSmallest.innerHTML = "Your smallest entitites : ";
+      for (let i = 0; i < smallestGuess.length; i++) {
+        const entitySmallest = document.createElement("div");
+        entitySmallest.textContent = (i + 1) + " - " + smallestGuess[i].Name + " : " + smallestGuess[i].Population;  
+        entitiesSmallest.appendChild(entitySmallest);
+      }
 
+      if (guess.TypeOfSettlement === "village") {
+        vilCount++;
+      } else if (guess.TypeOfSettlement === "city") {
+        citCount++;
+      }
+      
+      entitiesTypes.innerHTML =  `Types of entitties : <br>Total : ` + guesses.length + `<br>Villages : ` + vilCount + `<br>Cities : ` + citCount;
+      
     } catch (error) {
       console.error(error);
     }
