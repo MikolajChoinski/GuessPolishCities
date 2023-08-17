@@ -5,6 +5,7 @@ const form = document.querySelector(".guess input");
 const input = document.querySelector(".guess input");
 const guesses = [];
 const stats = document.getElementById("entities-pop");
+const submitButton = document.getElementById("submit");
 let poland = null;
 var vilCount = 0;
 var citCount = 0;
@@ -229,10 +230,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   poland = await getPoland();
 });
 
-console.log(poland);
-form.addEventListener("keydown", (event) => {
-  if (event.keyCode === 13) {
-  event.preventDefault();
+async function guessFunction() {
   var guessValue = input.value;
   const startTime = performance.now();
   
@@ -387,5 +385,16 @@ form.addEventListener("keydown", (event) => {
       const executionTime = endTime - startTime;
       console.log(`Execution time: ${executionTime} milliseconds`);
 }
-  
+console.log(poland);
+
+form.addEventListener("keydown", (event) => {
+  if (event.keyCode === 13) {
+  event.preventDefault();
+  guessFunction();
+  }
+});
+
+submitButton.addEventListener("click", (event) => {
+  event.preventDefault();
+  guessFunction();
 });

@@ -71,7 +71,7 @@ body {
   box-shadow: 4px 4px 4px rgba(194, 183, 183, 0.565);
 }
 
-#voivodeship {
+#submit {
   color: white;
   background-color: #D4213D;
   margin-left: 15px;
@@ -80,6 +80,14 @@ body {
   border-radius: 5px;
   padding: 10px;
 }
+#submit:hover {
+  background-color: #b41c33;
+  cursor: pointer;
+}
+#submit:active {
+  background-color: #63101c;
+}
+
 
 #map {
   height: 550px;
