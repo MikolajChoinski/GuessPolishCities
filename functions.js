@@ -112,18 +112,17 @@ function getType(entityType, data, ID) {
   for (let i = 0; i < entityType.length; i++) {
     var entityTypeId = data.entities[ID].claims.P31[i].mainsnak.datavalue.value.id;
     //console.log(entityTypeId);
-    if (entityTypeId === "Q515" || entityTypeId === "Q3558970" || entityTypeId === "Q2616791" || entityTypeId === "Q925381" || entityTypeId === "Q15334") {
-      if (entityTypeId === "Q515" || entityTypeId === "Q2616791" || entityTypeId === "Q925381" || entityTypeId === "Q15334" ) {
-        typeOfSettlement = "city";
-        //console.log(typeOfSettlement);
-        typeTrue = true;
-        break;
-      }
-      else if (entityTypeId === "Q3558970") {
-        typeOfSettlement = "village";
-        typeTrue = true;
-        break;
-      }
+    
+    if (entityTypeId === "Q515" || entityTypeId === "Q2616791" || entityTypeId === "Q925381" || entityTypeId === "Q15334" ) {
+      typeOfSettlement = "city";
+      //console.log(typeOfSettlement);
+      typeTrue = true;
+      break;
+    }
+    else if (entityTypeId === "Q3558970") {
+      typeOfSettlement = "village";
+      typeTrue = true;
+      break;
     }
     else {
       typeTrue = false;
@@ -229,8 +228,11 @@ var guessPop = 0;
 document.addEventListener('DOMContentLoaded', async () => {
   poland = await getPoland();
 });
-
-async function guessFunction() {
+const typesTitle = document.createElement("div");
+const typesTotal = document.createElement("div");
+const typesVillages = document.createElement("div");
+const typesCities = document.createElement("div");
+function guessFunction() {
   var guessValue = input.value;
   const startTime = performance.now();
   
@@ -347,6 +349,12 @@ async function guessFunction() {
       const entitiesSmallest = document.getElementById("entities-smallest");
       const entitiesTypes = document.getElementById("entities-types");
       if (guesses.length === 1) {
+        entitiesNames.className = "stats-box";
+        entitiesBiggest.className = "stats-box";
+        entitiesSmallest.className = "stats-box";
+        entitiesTypes.className = "stats-box";
+      }
+      if (guesses.length === 1) {
         const namesTitle = document.createTextNode("Guessed entitites : ");
         entitiesNames.appendChild(namesTitle);
       }
@@ -372,7 +380,22 @@ async function guessFunction() {
         citCount++;
       }
       
-      entitiesTypes.innerHTML =  `Types of entitties : <br>Total : ` + guesses.length + `<br>Villages : ` + vilCount + `<br>Cities : ` + citCount;
+      
+      if (guesses.length === 1) {
+        typesTitle.textContent = `Types of guessed entities:`
+        typesTotal.textContent = `Total: ${guesses.length}`;
+        typesVillages.textContent = `Villages: ${vilCount}`;
+        typesCities.textContent = `Cities: ${citCount}`;
+        entitiesTypes.appendChild(typesTitle);
+        entitiesTypes.appendChild(typesTotal);
+        entitiesTypes.appendChild(typesVillages);
+        entitiesTypes.appendChild(typesCities);
+      } else {
+        typesTotal.textContent = `Total: ${guesses.length}`;
+        typesVillages.textContent = `Villages: ${vilCount}`;
+        typesCities.textContent = `Cities: ${citCount}`;
+      }
+      
       
     } catch (error) {
       console.error(error);
