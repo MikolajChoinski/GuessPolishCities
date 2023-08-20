@@ -175,7 +175,7 @@ function getType(entityType, data, ID) {
     var fraction = guessPop * 100 / poland;
     var percentage = fraction.toFixed(2);
     console.log(guesses.length);
-    stats.textContent = "You guessed the population of " + guessPop + " out of " + poland + " people living in poland   " + percentage + " %";
+    stats.textContent = "You guessed the population of " + guessPop + " out of " + poland + " people living in Poland   (" + percentage + "%) ";
   }
 
   function sortBiggest(arr) {
@@ -355,7 +355,7 @@ function guessFunction() {
         entitiesTypes.className = "stats-box";
       }
       if (guesses.length === 1) {
-        const namesTitle = document.createTextNode("Guessed entitites : ");
+        const namesTitle = document.createTextNode("Guessed entities : ");
         entitiesNames.appendChild(namesTitle);
       }
       entitiesNames.appendChild(entityName);
@@ -367,7 +367,7 @@ function guessFunction() {
         entitiesBiggest.appendChild(entityBiggest);
       }
       var smallestGuess = sortSmallest(guesses);
-      entitiesSmallest.innerHTML = "Your smallest entitites : ";
+      entitiesSmallest.innerHTML = "Your smallest entities : ";
       for (let i = 0; i < smallestGuess.length; i++) {
         const entitySmallest = document.createElement("div");
         entitySmallest.textContent = (i + 1) + " - " + smallestGuess[i].Name + " : " + smallestGuess[i].Population;  
@@ -382,7 +382,7 @@ function guessFunction() {
       
       
       if (guesses.length === 1) {
-        typesTitle.textContent = `Types of guessed entities:`
+        typesTitle.textContent = `Types of guessed entities :`
         typesTotal.textContent = `Total: ${guesses.length}`;
         typesVillages.textContent = `Villages: ${vilCount}`;
         typesCities.textContent = `Cities: ${citCount}`;
