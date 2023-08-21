@@ -40,7 +40,7 @@ body {
   padding-right: 4rem;
 }
 
-.navbar-links > header {
+.navbar-links > a {
   margin-left: 2rem;
   margin-right: 2rem;
   font-size: 1.2rem;
