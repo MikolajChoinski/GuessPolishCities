@@ -3,9 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Creditst</title>
+  <title>Credits</title>
+  <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  
+  <nav class="navbar" style="margin-bottom: 0;">
+    <header class="app-title">POLISH CITY GUESSER</header>
+    <div  class="navbar-links">
+      <a><header>ABOUT</header></a>
+      <a><header>HOW TO PLAY</header></a>
+      <a href="../credits.html"><header>CREDITS</header></a>
+    </div>
+  </nav>
+  <div class="reading-page">
+    <h2>Inspiration for the project</h2>
+    <p>The project was inspired by the cities quizzes available at the <a href="https://cityquiz.io/">CityQuiz.io</a>, a website developed and operated by <a href="https://iafisher.com/">Ian Fisher</a>. I couldn't wait for the polish edition of the quiz so I decided to take the matters into my own hands and created this site.</p>
+    <h2>Software</h2>
+    <li>The frontend is written in JavaScript and styled in vanilla CSS.</li> 
+    <li>The project is bundled using <a href="https://webpack.js.org/">webpack</a>.</li>
+    <li>I used the <a href="https://leafletjs.com/">Leaflet.js</a> library to create an interactive map and markers.</li>
+    <li>I used the <a href="https://commons.wikimedia.org/w/index.php?curid=30407917">Map pin icon.svg</a> created by <a href="https://commons.wikimedia.org/wiki/User:Mono">Mono</a> to style the map markers.</li>
+    <li>I used the <a href="https://www.wikidata.org/w/api.php">MediaWiki Action API</a> to fetch the data about the population of Poland and about its cities and villages.</li>
+    <h2>Data</h2>
+    <li>All data is taken from <a href="https://www.wikidata.org/wiki/Wikidata:Main_Page">Wikidata</a> unless otherwise noted.</li>
+    <li>The map is taken from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> and <a href="https://carto.com/attributions">CARTO</a></li>
+    <h2>Copyright and licensing</h2>
+    <li>Data from Wikidata is licensed under a <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons CC0</a> license.</li>
+    <li>Maps from OpenStreetMap are available under the <a href="https://opendatacommons.org/licenses/odbl/">Open Data Commons Open Database License</a>.</li>
+    <li>The Map pin icon.svg is licensed under the <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.en">Creative Commons Attribution-Share Alike 3.0 Unported</a> license.</li>
+  </div>
+  <nav class="navbar-bottom"></nav>
 </body>
 </html>

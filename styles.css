@@ -46,11 +46,20 @@ body {
   font-size: 1.2rem;
 }
 
+.reading-page {
+  max-width: 50rem;
+  margin-top: 0;
+  margin-bottom: 0;
+  display: block;
+  font-size: 1.1rem;
+  background-color: white;
+}
 .navbar-bottom {
   background-color: #D4213D;
   min-height: 2rem;
   width: 100%;
   margin-top: auto;
+  margin-bottom: 0;
 }
 
 .guess {
