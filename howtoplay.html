@@ -8,7 +8,7 @@
 </head>
 <body>
   <nav class="navbar" style="margin-bottom: 0;">
-    <a href="./src/index.html"><header class="app-title">POLISH CITY GUESSER</header></a>
+    <a href="./src/index.html"><header class="app-title">GUESS POLISH CITIES</header></a>
     <div  class="navbar-links">
       <a href="./about.html"><header>ABOUT</header></a>
       <header>HOW TO PLAY</header>
@@ -16,6 +16,16 @@
     </div>
   </nav>
   <div class="reading-page">
+    <h2>Playing the game</h2>
+    <p>In order to play the game You just need to type in the name of a Polish city or a village in an input field above the map and then click enter or the "submit" button next to the input field. You can have multiple goals while playing the game but the most common metric of "success" is the percentage of the total population of Poland that inhabits Your guessed entities. To explain this process, the game sums app all the populations of the entities that you typed in and then displays it on the field below the map comparing it to the total population of Poland and then gives you the percentage. If your guess is incorrect or is the same as a previous one it will not be included in the markers and statistics on the page.</p>
+    <h2>Contents of the page</h2>
+    <li>Input field and submit button</li>
+    <li>Interactive map with markers which You can zoom in and out</li>
+    <li>Fields with 4 core statistics (available after you typed in the first entity): list of all guessed antities, entities sorted from biggest to smallest by population, entities sorted from smallest to biggest by population and types of guessed entities with the total number of correct guesses.</li>
+    <h2>Known issues</h2>
+    <li>All data is taken from the wikidata, which is a database that is created and edited by its users, therefore it has its shortcomings. Most importantly, there is a bunch of incomplete data, espacially for smaller villages in Poland, so sometimes even if the entity that You typed in exists it can still be evaluated as an incorrect guess by the software due to the lacks in the database.</li>
+    <li>It is important to note that it is best to correctly spell the name of an entity eiter in Polish, English or in any other language supported by wikibase entity, because otherwise it may be evaluated as an incorrect guess by the software.</li>
+    <li>The site is created using the WikiMedia Action Api (see more in the credits) so the delay between the typing of an entity and showing it on the map may be longer or even it may throw and error depending on the traffic managed by the Api.</li>
   </div>
   <nav class="navbar-bottom" style="margin-top: 0; margin-bottom: 0;" >
     <div>Developed by <a href="https://github.com/MikolajChoinski">Mikołaj Choiński</a> 2023</div>

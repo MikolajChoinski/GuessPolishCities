@@ -92,7 +92,7 @@ body > p {
   display: flex;
   flex-direction: row;
   margin-bottom:2rem;
-  margin-top: 1rem;
+  margin-top: 0.4rem;
   width: 37%;
   height: 2.8rem;
   align-items: center;
