@@ -8,8 +8,9 @@ body {
   overflow: auto;
   margin: 0;
   padding: 0;
-
 }
+
+
 
 .navbar { 
   margin-bottom: 3rem;
@@ -24,6 +25,15 @@ body {
   border-width: thin;
   border-color: rgba(0, 0, 0, 0.736);
   align-items: center;
+}
+
+.navbar > a {
+  text-decoration: none;
+  color: black;
+}
+
+.navbar > a:hover {
+  color: #a90d24;
 }
 
 .app-title {
@@ -41,25 +51,41 @@ body {
 }
 
 .navbar-links > a {
+  color: black;
+  text-decoration: none;
   margin-left: 2rem;
   margin-right: 2rem;
   font-size: 1.2rem;
 }
 
+.navbar-links > a:hover {
+  color: #a90d24;
+}
+
+.navbar-links > header {
+  margin-left: 2rem;
+  margin-right: 2rem;
+  font-size: 1.2rem;
+}
 .reading-page {
   max-width: 50rem;
+  padding: 2rem;
   margin-top: 0;
   margin-bottom: 0;
+  display: flex;
   display: block;
   font-size: 1.1rem;
   background-color: white;
+  min-height: calc(100vh - 6rem - 1px);
+  box-sizing: border-box;
+  text-align: justify;
+  box-shadow:
+    -10px 0px 10px -5px rgba(194, 183, 183, 0.565), /* Left shadow */
+    10px 0px 10px -5px rgba(194, 183, 183, 0.565);  /* Right shadow */
 }
-.navbar-bottom {
-  background-color: #D4213D;
-  min-height: 2rem;
-  width: 100%;
-  margin-top: auto;
-  margin-bottom: 0;
+
+body > p {
+  text-align: justify;
 }
 
 .guess {
@@ -124,12 +150,13 @@ body {
 .stats {
   width: 60%;
   padding: 0px;
-  margin-top: 1rem;
+  margin-top: 0.8rem;
   margin-bottom: 1rem;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   box-sizing: border-box;
+  font-size: 1rem;
 }
 
 .stats-box {
@@ -153,6 +180,7 @@ body {
 
 #entities-pop {
   margin-top: 10px;
+  font-size: 1.1rem;
 }
 #entities-names {
   float: left;
@@ -166,3 +194,26 @@ body {
  #entities-types {
   float: right;
  }
+
+ .navbar-bottom {
+  /* align-self: flex-end; */
+  background-color: #D4213D;
+  min-height: 2rem;
+  width: 100%;
+  margin-top: auto;
+   box-shadow:
+    -10px 0px 10px -5px rgba(194, 183, 183, 0.565), /* Left shadow */
+    10px 0px 10px -5px rgba(194, 183, 183, 0.565);  /* Right shadow */
+  color: white;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 2rem;
+  box-sizing: border-box;
+}
+
+.navbar-bottom > div > a {
+  text-decoration: none;
+  font-weight: bold;
+  color: white;
+}
