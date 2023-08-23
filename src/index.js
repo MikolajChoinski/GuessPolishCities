@@ -40,11 +40,9 @@ function guessFunction() {
   const startTime = performance.now();
   async function getData(ID) {
     try {
-      console.log(ID); 
       const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&props=labels|claims&format=json&ids=${ID}&origin=*&languages=en`;
       const res = await fetch(url);
       const data = await res.json();
-      console.log(data);
       let entityType = data.entities[ID].claims.P31;
       let entityPop = data.entities[ID].claims.P1082;
       let entityCountry = data.entities[ID].claims.P17;
@@ -82,7 +80,6 @@ function guessFunction() {
     try {
       let ID = await getId(guessValue);
       let data = await getData(ID);
-      console.log(data);
       if (data === false) {
         return [false];
       }
@@ -100,7 +97,6 @@ function guessFunction() {
       }
       else {
         let [entityCoordinates, typeOfSettlement, population, name] = data;
-        console.log(entityCoordinates);
         let guess = {
           "Name": name,
           "Population": population,
@@ -129,7 +125,6 @@ function guessFunction() {
     try {
       let guess = await plopCity();
       entityCount++;
-      console.log(guess);
       if (guess === false) {
         return false;
       }

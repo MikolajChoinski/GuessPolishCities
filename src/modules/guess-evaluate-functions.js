@@ -1,7 +1,7 @@
 // Functions needed to evaluate users guess in the getData function
 
 export function checkGuess(name, guesses) {
-  var guessTrue;
+  let guessTrue;
   if (guesses.length > 0) {
     for (let i = 0; i < guesses.length; i++) {
       if (name === guesses[i].Name) {
@@ -20,8 +20,8 @@ export function checkGuess(name, guesses) {
 }
 
 export function getType(entityType, data, ID) {
-  var typeOfSettlement;
-  var typeTrue;
+  let typeOfSettlement;
+  let typeTrue;
   for (let i = 0; i < entityType.length; i++) {
     var entityTypeId = data.entities[ID].claims.P31[i].mainsnak.datavalue.value.id;
     if (entityTypeId === "Q515" || entityTypeId === "Q2616791" || entityTypeId === "Q925381" || entityTypeId === "Q15334" ) {
@@ -42,7 +42,7 @@ export function getType(entityType, data, ID) {
   } 
 
 export function getCountry(entityCountry) {
-  var countryTrue;
+  let countryTrue;
   for (let i = 0; i < entityCountry.length; i++) {
     const entityCountryId = entityCountry[i].mainsnak.datavalue.value.id;
     const entityCountryRank = entityCountry[i].rank;
@@ -63,16 +63,13 @@ export function getPopulation(entityPop) {
     console.log(entityPop.length);
     if (entityPop[i].rank === "preferred") {
       var population = entityPop[i].mainsnak.datavalue.value.amount;
-      console.log("preferred");
       break;
     }
     else if (entityPop.length === 1) {
       var population = entityPop[i].mainsnak.datavalue.value.amount;
-      console.log("notpreferred");
       break;
     } else if (entityPop.length > 1 && !entityPop.includes(entityPop.rank=== "preferred")) {
       var population = entityPop[0].mainsnak.datavalue.value.amount;
-      console.log("weird");
       break;
     }
   }
