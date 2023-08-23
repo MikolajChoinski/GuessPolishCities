@@ -1,11 +1,10 @@
-// By Mono - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=30407917
-import getPoland from "./getpoland.js";
-import getId from "./getid.js";
+import getPoland from "./modules/getpoland.js";
+import getId from "./modules/getid.js";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { checkGuess, getType, getCountry, getPopulation } from "./guess-evaluate-functions.js";
-import { sortBiggest, sortSmallest } from "./sorting-functions.js";
-import { getNumber, getPercentage } from "./data-processing-functions.js";
+import { checkGuess, getType, getCountry, getPopulation } from "./modules/guess-evaluate-functions.js";
+import { sortBiggest, sortSmallest } from "./modules/sorting-functions.js";
+import { getNumber, getPercentage } from "./modules/data-processing-functions.js";
 
 const form = document.querySelector(".guess input");
 const input = document.querySelector(".guess input");

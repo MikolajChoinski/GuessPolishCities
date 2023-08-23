@@ -1,3 +1,10 @@
 # GuessPolishCities
 
-https://leaflet-extras.github.io/leaflet-providers/preview/
+Geographical quiz game created with Leaflet.js and MediaWiki Action Ap.
+
+## Technology
+
+*HTML
+*Webpack
+*JavaScript
+*CSS
