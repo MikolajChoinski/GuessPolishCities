@@ -52,3 +52,9 @@ Main function responsible for handling all the procesess needed to fetch the dat
 ### **_Install dependencies by `npm i webpack` and `npm i webpack-CLI`_**
 
 ### Production Build - `npm run build`
+
+## Copyright and licensing
+
+- Data from Wikidata is licensed under a Creative Commons CC0
+- Maps from OpenStreetMap are available under the Open Data Commons Open Database License
+- The Map pin icon.svg is licensed under the Creative Commons Attribution-Share Alike 3.0 Unported License
