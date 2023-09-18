@@ -49,22 +49,26 @@ function guessFunction() {
       let entityCoordinates = data.entities[ID].claims.P625[0];
       let name = data.entities[ID].labels.en.value;
       let guessTrue = checkGuess(name, guesses);
+      let typeOfSettlement;
+      let typeTrue;
+      let countryTrue;
+      let population;
 
       if (guessTrue === true) {
-        var [typeOfSettlement, typeTrue] = getType(entityType, data, ID);
+        [typeOfSettlement, typeTrue] = getType(entityType, data, ID);
       }
       else {
         return false;
       }
 
       if (typeTrue === true) {
-        var countryTrue = getCountry(entityCountry);
+        countryTrue = getCountry(entityCountry);
       }
       else {
         return false;
       }
       if (countryTrue === true) {
-        var population = getPopulation(entityPop);
+        population = getPopulation(entityPop);
         population = getNumber(population);
       }
       else {

@@ -4,10 +4,12 @@ export default async function getPoland(getNumber) {
     const res = await fetch(url);
     const data = await res.json();
     const populations = data.claims.P1082;
+    let poland;
     for (let i = 0; i < populations.length; i++){
       if (populations[i].rank ==='preferred') {
-        var polandString = populations[i].mainsnak.datavalue.value.amount;
-        var poland = getNumber(polandString);
+        let polandString = populations[i].mainsnak.datavalue.value.amount;
+        poland = getNumber(polandString);
+        
       }
     }
     return poland;

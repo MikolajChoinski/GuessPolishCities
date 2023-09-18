@@ -22,8 +22,9 @@ export function checkGuess(name, guesses) {
 export function getType(entityType, data, ID) {
   let typeOfSettlement;
   let typeTrue;
+  let entityTypeId;
   for (let i = 0; i < entityType.length; i++) {
-    var entityTypeId = data.entities[ID].claims.P31[i].mainsnak.datavalue.value.id;
+    entityTypeId = data.entities[ID].claims.P31[i].mainsnak.datavalue.value.id;
     if (entityTypeId === "Q515" || entityTypeId === "Q2616791" || entityTypeId === "Q925381" || entityTypeId === "Q15334" ) {
       typeOfSettlement = "city";
       typeTrue = true;
@@ -59,19 +60,21 @@ export function getCountry(entityCountry) {
 }
 
 export function getPopulation(entityPop) {
+  let population;
   for (let i = 0; i < entityPop.length; i++) {
     console.log(entityPop.length);
     if (entityPop[i].rank === "preferred") {
-      var population = entityPop[i].mainsnak.datavalue.value.amount;
+      population = entityPop[i].mainsnak.datavalue.value.amount;
       break;
     }
     else if (entityPop.length === 1) {
-      var population = entityPop[i].mainsnak.datavalue.value.amount;
+      population = entityPop[i].mainsnak.datavalue.value.amount;
       break;
     } else if (entityPop.length > 1 && !entityPop.includes(entityPop.rank=== "preferred")) {
-      var population = entityPop[0].mainsnak.datavalue.value.amount;
+      population = entityPop[0].mainsnak.datavalue.value.amount;
       break;
     }
+    
   }
   return population;
 }
