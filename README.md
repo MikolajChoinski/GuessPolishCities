@@ -1,6 +1,6 @@
 # GuessPolishCities
 
-Geographical quiz game created with Leaflet.js and MediaWiki Action Ap.
+Geographical quiz game created with Leaflet.js and MediaWiki Action Ap. Available at: https://guesspolishcities.netlify.app
 
 ## Technology
 
